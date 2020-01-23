@@ -1,6 +1,7 @@
 #PYGAME TEMPLATES
 import pygame
 import random
+import os
 
 WIDTH = 800
 HEIGHT = 600
@@ -13,7 +14,11 @@ RED = (255,0,0)
 GREEN = (0,255,0)
 BLUE = (0,0,255)
 
-#Initia;ize pygame and create Window
+#set up assets folders
+game_folder = os.path.dirname(__file__)
+img_folder = os.path.join(game_folder, "img")
+
+#Initialize pygame and create Window
 pygame.init()
 pygame.mixer.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -24,13 +29,19 @@ class Player(pygame.sprite.Sprite):
     #sprite for the player
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((50,50))
-        self.image.fill(GREEN)
+        self.image = pygame.image.load(os.path.join(img_folder, "p1_jump.png")).convert()
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH/2, HEIGHT/2)
+        self.y_speed = 5
 
     def update(self):
         self.rect.x += 5
+        self.rect.y += self.y_speed
+        if self.rect.bottom > HEIGHT - 200:
+            self.y_speed = -5
+        if self.rect.top < 200:
+            self.y_speed = 5
         if self.rect.right > WIDTH:
             self.rect.left = 0
 
@@ -53,7 +64,7 @@ while running:
     all_sprites.update()
 
     #Draw / Render
-    screen.fill(BLACK)
+    screen.fill(BLUE)
     all_sprites.draw(screen)
     #*after* drawing everything, flip the display
     pygame.display.flip()
