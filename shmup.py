@@ -1,6 +1,9 @@
 #SHMUP GAME
 import pygame
 import random
+from os import path
+
+img_dir = path.join(path.dirname(__file__), 'img')
 
 WIDTH = 480
 HEIGHT = 600
@@ -24,8 +27,8 @@ clock = pygame.time.Clock()
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((50,40))
-        self.image.fill(GREEN)
+        self.image = pygame.transform.scale(player_img, (50, 38))
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
@@ -52,8 +55,8 @@ class Player(pygame.sprite.Sprite):
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((30,40))
-        self.image.fill(RED)
+        self.image = meteor_img
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = random.randrange(WIDTH - self.rect.width)
         self.rect.y = random.randrange(-100, -40)
@@ -71,8 +74,8 @@ class Mob(pygame.sprite.Sprite):
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((10,20))
-        self.image.fill(YELLOW)
+        self.image = bullet_img
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
@@ -83,6 +86,14 @@ class Bullet(pygame.sprite.Sprite):
         #kill if it moves off the top of screen
         if self.rect.bottom < 0:
             self.kill()
+
+
+#Load all game graphics
+background = pygame.image.load(path.join(img_dir, "starfield.png")).convert()
+background_rect = background.get_rect()
+player_img = pygame.image.load(path.join(img_dir, "playerShip3_blue.png")).convert()
+meteor_img = pygame.image.load(path.join(img_dir, "meteorBrown_med1.png")).convert()
+bullet_img = pygame.image.load(path.join(img_dir, "laserBlue01.png")).convert()
 
 all_sprites = pygame.sprite.Group()
 mobs = pygame.sprite.Group()
@@ -124,6 +135,7 @@ while running:
 
     #Draw / Render
     screen.fill(BLACK)
+    screen.blit(background, background_rect)
     all_sprites.draw(screen)
     #*after* drawing everything, flip the display
     pygame.display.flip()
